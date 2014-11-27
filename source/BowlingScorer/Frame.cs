@@ -61,7 +61,7 @@ namespace CodingDojo
 
         public override int GetHashCode()
         {
-            return this.SummedScore;
+            return (this.SummedScore.GetHashCode() * 17) + this.First.GetHashCode() + this.Second.GetHashCode() + this.Third.GetHashCode();
         }
 
         private bool Equals(Frame other)

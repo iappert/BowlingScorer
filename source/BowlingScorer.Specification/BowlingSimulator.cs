@@ -52,7 +52,8 @@ namespace CodingDojo.Specification
             var summedScore = 0;
             foreach (var internalFrame in this.frames)
             {
-                yield return new Frame(summedScore += internalFrame.Score, internalFrame.Rolls);
+                summedScore += internalFrame.Score;
+                yield return new Frame(summedScore, internalFrame.Rolls);
             }
         }
 

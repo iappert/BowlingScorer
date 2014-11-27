@@ -7,9 +7,12 @@ namespace CodingDojo
     {
         private readonly int[] knockedPins;
 
-        public ScoreBoardAccumulator(int[] knockedPins)
+        private readonly int maximalRoll;
+
+        public ScoreBoardAccumulator(int[] knockedPins, int maximalRoll)
         {
             this.knockedPins = knockedPins;
+            this.maximalRoll = maximalRoll;
         }
 
         public IEnumerable<Frame> AccumulateScoreBoard()
@@ -18,39 +21,42 @@ namespace CodingDojo
             var rollIndex = 0;
             for (var frameIndex = 0; frameIndex < 10; frameIndex++)
             {
-                if (this.IsStrike(rollIndex))
+                if (rollIndex < this.maximalRoll)
                 {
-                    summedScore += this.ScoreWithStrikeBonus(rollIndex);
-                    Frame currentFrame;
-                    if (frameIndex != 9)
+                    if (this.IsStrike(rollIndex))
                     {
-                        currentFrame = new Frame(summedScore, new[] { this.knockedPins[rollIndex] });
+                        summedScore += this.ScoreWithStrikeBonus(rollIndex);
+                        Frame currentFrame;
+                        if (frameIndex != 9)
+                        {
+                            currentFrame = new Frame(summedScore, new[] { this.knockedPins[rollIndex] });
+                        }
+                        else
+                        {
+                            currentFrame = new Frame(
+                                summedScore,
+                                new[] { this.knockedPins[rollIndex], this.knockedPins[rollIndex + 1], this.knockedPins[rollIndex + 2] });
+                        }
+
+                        rollIndex++;
+
+                        yield return currentFrame;
+                    }
+                    else if (this.IsSpare(rollIndex))
+                    {
+                        summedScore += this.ScoreWithSpareBonus(rollIndex);
+                        var currentFrame = new Frame(summedScore, new[] { this.knockedPins[rollIndex], this.knockedPins[rollIndex + 1] });
+                        rollIndex += 2;
+                        yield return currentFrame;
                     }
                     else
                     {
-                        currentFrame = new Frame(
-                            summedScore,
-                            new[] { this.knockedPins[rollIndex], this.knockedPins[rollIndex + 1], this.knockedPins[rollIndex + 2] });
+                        summedScore += this.knockedPins[rollIndex] + this.knockedPins[rollIndex + 1];
+                        var currentFrame = new Frame(summedScore, new[] { this.knockedPins[rollIndex], this.knockedPins[rollIndex + 1] });
+                        rollIndex += 2;
+
+                        yield return currentFrame;
                     }
-
-                    rollIndex++;
-
-                    yield return currentFrame;
-                }
-                else if (this.IsSpare(rollIndex))
-                {
-                    summedScore += this.ScoreWithSpareBonus(rollIndex);
-                    var currentFrame = new Frame(summedScore, new[] { this.knockedPins[rollIndex], this.knockedPins[rollIndex + 1] });
-                    rollIndex += 2;
-                    yield return currentFrame;
-                }
-                else
-                {
-                    summedScore += this.knockedPins[rollIndex] + this.knockedPins[rollIndex + 1];
-                    var currentFrame = new Frame(summedScore, new[] { this.knockedPins[rollIndex], this.knockedPins[rollIndex + 1] });
-                    rollIndex += 2;
-
-                    yield return currentFrame;
                 }
             }
         }

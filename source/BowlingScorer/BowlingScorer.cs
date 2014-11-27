@@ -20,7 +20,7 @@
 
         public IEnumerable<Frame> GetScoreBoard()
         {
-            var scoreBoardAccumulator = new ScoreBoardAccumulator(this.rolls);
+            var scoreBoardAccumulator = new ScoreBoardAccumulator(this.rolls, this.currentRoll);
 
             return scoreBoardAccumulator.AccumulateScoreBoard();
         }

@@ -1,0 +1,13 @@
+1. Get current score without bonuses.
+
+2. Get current score with spare bonus.
+
+3. Get current score with strike bonus.
+
+4. Get complete score board.
+
+5. Get partial score board for games in progress.
+
+6. Get current number of frame.
+
+7. Is current frame finished.
